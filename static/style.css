@@ -1,0 +1,610 @@
+/* static/style.css - Refactored */
+
+/* --- :root Variables (Theme & Layout Configuration) --- */
+:root {
+  /* Color Palette (Dark Theme) */
+  --bg-primary: #1a1d21;       /* Deep dark background */
+  --bg-secondary: #23272e;    /* Lighter background for elements */
+  --bg-tertiary: #2a2f37;     /* Even lighter for sub-elements */
+  --bg-accent: #3a414e;       /* Accent background (inputs, etc.) */
+
+  --text-primary: #cdd3de;     /* Main text color (off-white) */
+  --text-secondary: #a0a8b7;   /* Subdued text color (greyish) */
+  --text-accent: #e5e9f0;      /* Brighter text (headings) */
+  --text-on-accent: #ffffff;   /* Text on accent color backgrounds */
+
+  --accent-primary: #0095ff;   /* Main accent (blue) */
+  --accent-primary-dark: #0077cc; /* Darker accent for hover */
+  --accent-secondary: #00cc7a; /* Secondary accent (green) */
+  --accent-error: #ff5555;     /* Error color (red) */
+  --accent-error-bg: #4d2222;  /* Error background */
+  --accent-warning: #ffcc66;   /* Warning color (yellow) */
+  --accent-warning-bg: #4a412a;/* Warning background */
+
+  --border-color: #3e4451;     /* Default border color */
+  --border-color-light: #4a5160; /* Lighter border */
+  --border-radius-sm: 4px;
+  --border-radius-md: 6px;
+
+  /* Typography */
+  --font-primary: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --font-code: 'Fira Code', Consolas, 'Courier New', monospace;
+  --font-size-base: 16px;      /* Base font size for rem units */
+  --line-height-base: 1.6;
+
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+
+  /* Shadows & Transitions */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.25);
+  --transition-fast: 0.2s ease-out;
+  --transition-base: 0.3s ease-out;
+}
+
+/* --- Global Styles & Reset --- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: var(--font-size-base);
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-primary);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: var(--line-height-base);
+  padding: var(--spacing-lg);
+}
+
+/* --- Base Typography --- */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-accent);
+  margin-bottom: var(--spacing-md);
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+h1 {
+  text-align: center;
+  color: var(--accent-primary);
+  margin-bottom: var(--spacing-sm);
+  font-size: 2.4rem;
+  font-weight: 700;
+}
+
+h2 { /* Major Page Sections (Recon, Forensics) */
+  font-size: 1.8rem;
+  border-bottom: 2px solid var(--accent-primary-dark);
+  padding-bottom: var(--spacing-sm);
+  margin-top: var(--spacing-xl);
+  margin-bottom: var(--spacing-lg);
+}
+
+h3 { /* Tool Titles / Result Area Titles */
+  font-size: 1.5rem;
+  color: var(--accent-secondary);
+  margin-top: var(--spacing-lg);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: var(--spacing-xs);
+}
+
+h4 { /* Result Block Titles */
+  font-size: 1.2rem;
+  color: var(--text-accent);
+  margin-bottom: var(--spacing-sm);
+}
+
+h5 { /* Sub-block Titles */
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  margin-top: var(--spacing-md);
+  margin-bottom: var(--spacing-xs);
+}
+
+h6 { /* Specific Detail Titles (e.g., in display helpers) */
+   font-size: 1rem;
+   color: var(--text-secondary);
+   margin-top: var(--spacing-sm);
+   margin-bottom: var(--spacing-xs);
+   font-weight: 700;
+   text-transform: uppercase; /* Example: make these stand out */
+   letter-spacing: 0.5px;
+}
+
+
+p {
+  margin-bottom: var(--spacing-md);
+}
+
+a {
+  color: var(--accent-primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover, a:focus {
+  color: lighten(var(--accent-primary), 15%);
+  text-decoration: underline;
+  outline: none; /* Use focus-visible instead */
+}
+
+a:focus-visible { /* Modern focus outline */
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+  border-radius: var(--border-radius-sm);
+}
+
+
+pre {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-md);
+  font-family: var(--font-code);
+  font-size: 0.9rem;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  color: var(--text-primary);
+  max-height: 500px; /* Increased max height */
+  overflow: auto; /* Use auto for scrollbar */
+  box-shadow: var(--shadow-sm) inset;
+}
+
+ul, ol {
+  padding-left: var(--spacing-lg); /* Use padding instead of margin */
+}
+li {
+  margin-bottom: var(--spacing-sm);
+}
+dl {
+  margin-left: var(--spacing-sm);
+}
+
+/* --- Forms & Inputs --- */
+button, input[type="text"], input[type="file"] {
+  font-family: inherit; /* Inherit body font */
+  font-size: 1rem;
+}
+
+button {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--accent-primary);
+  color: var(--text-on-accent);
+  border: none;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+button:hover {
+  background-color: var(--accent-primary-dark);
+  box-shadow: var(--shadow-md);
+}
+button:active {
+   transform: scale(0.98);
+   box-shadow: none;
+}
+button:disabled {
+  background-color: var(--bg-accent);
+  color: var(--text-secondary);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+button:focus-visible {
+   outline: 2px solid var(--accent-primary);
+   outline-offset: 2px;
+}
+
+.input-area {
+  background-color: var(--bg-secondary);
+  padding: var(--spacing-md) var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  box-shadow: var(--shadow-sm);
+}
+.input-area label {
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-right: var(--spacing-xs);
+}
+.input-area input[type="text"] {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  background-color: var(--bg-accent);
+  color: var(--text-primary);
+  flex-grow: 1;
+  min-width: 250px;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+.input-area input[type="text"]:focus {
+   outline: none;
+   border-color: var(--accent-primary);
+   box-shadow: 0 0 0 2px rgba(0, 149, 255, 0.3); /* Subtle focus glow */
+}
+.input-area input[type="file"] {
+  color: var(--text-secondary); /* Style the "No file chosen" text */
+}
+.input-area input[type="file"]::file-selector-button {
+  /* Inherit button styles */
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--accent-secondary); /* Green for file action */
+  color: var(--text-on-accent);
+  border: none;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color var(--transition-fast);
+  margin-right: var(--spacing-md);
+}
+.input-area input[type="file"]::file-selector-button:hover {
+   background-color: darken(var(--accent-secondary), 10%);
+}
+
+/* --- Task Selection --- */
+.task-selection-area {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  align-items: flex-start;
+}
+.task-selection-area fieldset {
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-sm) var(--spacing-lg) var(--spacing-lg);
+  background-color: var(--bg-secondary);
+  flex: 1;
+  min-width: 300px;
+  box-shadow: var(--shadow-sm);
+}
+.task-selection-area legend {
+  font-weight: 600;
+  color: var(--text-secondary);
+  padding: 0 var(--spacing-sm);
+  font-size: 0.9em;
+}
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+}
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: var(--text-primary);
+  transition: color var(--transition-fast);
+}
+.checkbox-group label:hover {
+  color: var(--text-accent);
+}
+.checkbox-group input[type="checkbox"] {
+  margin-right: var(--spacing-sm);
+  accent-color: var(--accent-primary);
+  cursor: pointer;
+  width: 1.1em; /* Slightly larger checkbox */
+  height: 1.1em;
+}
+#run-selected-scans-btn {
+  margin-top: var(--spacing-md);
+  align-self: center;
+}
+
+/* --- General Layout Elements --- */
+.disclaimer {
+  text-align: center;
+  color: var(--accent-warning);
+  background-color: var(--accent-warning-bg);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  margin-bottom: var(--spacing-lg);
+  font-size: 0.9em;
+  border: 1px solid darken(var(--accent-warning), 10%);
+}
+
+/* --- Tab Navigation --- */
+.tab-navigation {
+  margin-bottom: var(--spacing-lg);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+}
+.tab-button {
+  background-color: transparent; /* Cleaner look */
+  color: var(--text-secondary);
+  border: 1px solid transparent; /* Keep space, hide border */
+  border-bottom: none;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  cursor: pointer;
+  margin-right: var(--spacing-xs);
+  border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+  transition: background-color var(--transition-base), color var(--transition-base), border-color var(--transition-base);
+  position: relative;
+  bottom: -1px; /* Overlap border */
+  font-weight: 600;
+}
+.tab-button:hover {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+.tab-button.active {
+  background-color: var(--bg-primary);
+  color: var(--accent-primary);
+  border-color: var(--border-color) var(--border-color) var(--bg-primary); /* Sides and top border match, bottom transparent */
+}
+.tab-button:focus-visible { /* Focus style for tabs */
+  outline: 2px solid var(--accent-primary);
+  outline-offset: -3px; /* Inset outline */
+}
+
+/* Tab Content */
+.tab-content {
+  display: none;
+  padding-top: var(--spacing-lg);
+  /* border-top: 1px solid var(--border-color); Already handled by tab bottom border */
+  /* margin-top: -1px; */
+}
+.tab-content.active {
+  display: block;
+}
+
+/* --- Results Area & Blocks --- */
+#results-area {
+  margin-top: var(--spacing-lg);
+  background-color: var(--bg-secondary); /* Use secondary for main results area */
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-md);
+}
+.results-section {
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 1px dashed var(--border-color-light);
+}
+.results-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+.result-block {
+  background-color: var(--bg-tertiary); /* Slightly distinct background */
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+.sub-block {
+  margin-top: var(--spacing-md);
+  padding-left: var(--spacing-md);
+  border-left: 3px solid var(--border-color-light); /* Thicker border */
+}
+
+/* --- Loading & Error Styles --- */
+.loading {
+  text-align: center;
+  padding: var(--spacing-md);
+  background-color: var(--accent-warning-bg);
+  color: var(--accent-warning);
+  border-radius: var(--border-radius-md);
+  margin: var(--spacing-lg) 0;
+  font-weight: bold;
+  border: 1px solid darken(var(--accent-warning), 10%);
+}
+.error {
+  color: var(--accent-error);
+  background-color: var(--accent-error-bg);
+  border: 1px solid darken(var(--accent-error), 10%);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  margin: var(--spacing-lg) 0;
+  font-weight: 600; /* Slightly less bold than loading */
+}
+.error pre { /* Errors inside pre tags */
+   background-color: var(--accent-error-bg);
+   color: lighten(var(--accent-error), 15%);
+   border-color: darken(var(--accent-error), 10%);
+}
+span.error { /* Inline error messages */
+   color: var(--accent-error);
+   font-style: italic;
+   font-weight: normal;
+}
+
+/* --- Forensic Tool Styling --- */
+.forensic-tool {
+  background-color: var(--bg-secondary); /* Match results area bg */
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-md);
+}
+.forensic-tool h3 {
+  color: var(--accent-primary); /* Blue for forensic tool titles */
+  border-bottom-color: var(--accent-primary-dark);
+}
+#image-metadata-results h4 { /* "Metadata for: ..." */
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin-bottom: var(--spacing-md);
+  font-weight: normal; /* Less emphasis */
+}
+#image-metadata-results h4 span { /* Filename */
+  font-family: var(--font-code);
+  color: var(--text-primary);
+  font-weight: bold;
+}
+#gps-content { /* GPS results block */
+  border: 1px solid var(--accent-primary) !important;
+  background-color: rgba(0, 149, 255, 0.05) !important; /* Subtle blue tint */
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  margin-bottom: var(--spacing-lg);
+}
+#gps-content h6 {
+  color: var(--accent-primary);
+  font-size: 1.1rem;
+  margin-bottom: var(--spacing-sm);
+  text-transform: none; /* Revert uppercase */
+  letter-spacing: normal;
+}
+span.gps-icon {
+  font-size: 1.2em;
+  margin-right: var(--spacing-sm);
+  vertical-align: middle;
+}
+#gps-content p {
+  margin-bottom: var(--spacing-xs);
+  line-height: 1.5;
+  color: var(--text-primary);
+  padding-left: calc(var(--spacing-sm) + 1.2em); /* Indent text past icon */
+  font-size: 0.95rem;
+}
+p.map-links {
+  font-size: 0.9em;
+  margin-top: var(--spacing-sm);
+}
+p.map-links a {
+  margin-right: var(--spacing-md);
+}
+#metadata-content { /* Other EXIF data */
+  margin-top: var(--spacing-lg);
+}
+#metadata-content h6 { /* "Other Metadata:" heading */
+   color: var(--text-secondary);
+   margin-bottom: var(--spacing-sm);
+}
+#metadata-content dl {
+  font-size: 0.85rem; /* Smaller font for details */
+  max-height: 600px;
+  overflow-y: auto;
+  padding-right: var(--spacing-sm);
+  column-gap: var(--spacing-lg); /* Gap between dt/dd */
+}
+#metadata-content dt {
+  font-family: var(--font-code);
+  color: var(--text-secondary);
+  font-weight: normal;
+  margin-bottom: var(--spacing-xs);
+  float: left;
+  width: 200px; /* Wider key column */
+  clear: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-right: var(--spacing-sm);
+}
+#metadata-content dd {
+  margin-left: 210px; /* Adjust for wider dt */
+  margin-bottom: var(--spacing-sm);
+  word-wrap: break-word;
+  color: var(--text-primary);
+}
+#metadata-content dd i { /* Omitted data notes */
+  color: var(--text-secondary);
+  font-weight: lighter;
+}
+
+/* Guidance Blocks */
+.guidance-block {
+  background-color: var(--bg-tertiary);
+  border-left: 4px solid var(--border-color-light); /* Accent border */
+}
+.guidance-block h4 {
+  color: var(--text-secondary);
+  font-size: 1.1em;
+  font-weight: bold;
+}
+.guidance-block p {
+  font-size: 0.95em;
+  color: var(--text-secondary);
+}
+.guidance-block strong { /* Highlight key terms */
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* Optional Map Placeholder Style */
+#map-display {
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  background-color: var(--bg-secondary); /* Placeholder background */
+  min-height: 200px; /* Ensure it has some height */
+}
+
+/* --- Responsiveness (Example) --- */
+@media (max-width: 800px) {
+  body {
+      padding: var(--spacing-md);
+  }
+  .task-selection-area {
+      flex-direction: column;
+      align-items: stretch; /* Make fieldsets full width */
+      gap: var(--spacing-md);
+  }
+  .task-selection-area fieldset {
+       min-width: unset;
+  }
+  #metadata-content dt {
+      width: 150px; /* Narrower key column on smaller screens */
+  }
+  #metadata-content dd {
+       margin-left: 160px;
+  }
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.6rem; }
+}
+
+@media (max-width: 500px) {
+  .input-area {
+      flex-direction: column;
+      align-items: stretch;
+  }
+  .input-area input[type="text"] {
+       min-width: unset;
+  }
+  .tab-navigation {
+      font-size: 0.9rem; /* Smaller tabs */
+  }
+  .tab-button {
+       padding: var(--spacing-xs) var(--spacing-sm);
+  }
+   #metadata-content dt, #metadata-content dd {
+      float: none;
+      width: auto;
+      margin-left: 0;
+      padding-left: 0;
+  }
+   #metadata-content dt {
+       font-weight: bold;
+       color: var(--text-primary); /* Make key more prominent */
+       margin-bottom: 2px;
+   }
+   #metadata-content dd {
+       margin-bottom: var(--spacing-md);
+       padding-left: var(--spacing-sm); /* Indent value slightly */
+   }
+}

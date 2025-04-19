@@ -1,0 +1,10 @@
+# .env file
+# Replace placeholders with your actual API keys/tokens
+# Get SerpApi key from: https://serpapi.com/
+SERPAPI_API_KEY='YOUR_SERPAPI_API_KEY_HERE'
+
+# Get GitHub token from: GitHub -> Settings -> Developer settings -> Personal access tokens -> Tokens (classic)
+# Needs 'public_repo' scope at minimum for public repo searching.
+GITHUB_TOKEN='YOUR_GITHUB_TOKEN_HERE'
+
+# VULNERS_API_KEY='YOUR_VULNERS_KEY_HERE' # Optional, for future vulnerability lookup feature

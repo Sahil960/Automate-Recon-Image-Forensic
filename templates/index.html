@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recon & Forensics Guidance Tool - Dark</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Segoe+UI:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Optional: Add Leaflet CSS if using interactive map -->
+    <!-- <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" /> -->
+</head>
+<body>
+    <h1>Web Reconnaissance & Forensics Tool</h1>
+    <p class="disclaimer">
+        <strong>Disclaimer:</strong> Use responsibly & only on authorized systems/data. Verify legal permissions before analyzing any data.
+    </p>
+
+    <!-- Tab Navigation (Optional but recommended for separating sections) -->
+    <div class="tab-navigation">
+        <button class="tab-button active" onclick="showTab('recon-tab')">Reconnaissance</button>
+        <button class="tab-button" onclick="showTab('forensics-tab')">Forensic Tools</button>
+    </div>
+
+    <!-- Reconnaissance Tab Content -->
+    <div id="recon-tab" class="tab-content active">
+        <h2>Reconnaissance</h2>
+        <div class="input-area">
+            <label for="target">Target Domain or IP:</label>
+            <input type="text" id="target" name="target" placeholder="e.g., example.com or 8.8.8.8">
+        </div>
+
+        <!-- Task Selection Area -->
+        <div class="task-selection-area">
+            <fieldset>
+                <legend>Passive Recon Tasks</legend>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" name="tasks" value="whois"> WHOIS</label>
+                    <label><input type="checkbox" name="tasks" value="dns"> DNS Records</label>
+                    <label><input type="checkbox" name="tasks" value="ct_logs"> Subdomains (CT Logs)</label>
+                    <label><input type="checkbox" name="tasks" value="tech_passive"> Technology Detection</label>
+                    <label><input type="checkbox" name="tasks" value="github"> GitHub Recon</label>
+                    <label><input type="checkbox" name="tasks" value="wayback"> Wayback Machine</label>
+                    <label><input type="checkbox" name="tasks" value="serpapi"> Google Dorks (SerpApi)</label>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Active Recon Tasks</legend>
+                 <div class="checkbox-group">
+                    <label><input type="checkbox" name="tasks" value="nmap"> Port Scan (Nmap)</label>
+                    <label><input type="checkbox" name="tasks" value="crawl"> Web Crawl</label>
+                    <label><input type="checkbox" name="tasks" value="tech_active"> Technology Detection</label>
+                    <label><input type="checkbox" name="tasks" value="axfr"> Zone Transfer (AXFR)</label>
+                    <label><input type="checkbox" name="tasks" value="fuzz"> Directory Fuzzing</label>
+                </div>
+            </fieldset>
+            <button id="run-selected-scans-btn">Run Selected Recon Scans</button>
+        </div>
+
+        <div id="loading" class="loading" style="display: none;">
+            Running selected scans... Please wait.
+        </div>
+
+        <div id="results-area">
+            <h3>Recon Results & Guidance</h3>
+            <div id="error-message" class="error" style="display: none;"></div>
+
+            <!-- Passive Results Section -->
+            <div id="passive-results-section" class="results-section" style="display: none;">
+                <h4>Passive Reconnaissance Results for <span class="target-display"></span></h4>
+                <div class="result-block" id="whois-block" style="display: none;"><h5>WHOIS Information</h5><pre id="whois-results"></pre></div>
+                <div class="result-block" id="dns-block" style="display: none;"><h5>DNS Records</h5><pre id="dns-results"></pre></div>
+                <div class="result-block" id="ct_logs-block" style="display: none;"><h5>Subdomains (via CT Logs - crt.sh)</h5><pre id="crtsh-results"></pre></div>
+                <div class="result-block" id="tech_passive-block" style="display: none;"><h5>Technology Detection (webtech)</h5><div id="passive-tech-results-content"></div></div>
+                <div class="result-block" id="github-block" style="display: none;"><h5>GitHub Reconnaissance</h5><div id="github-results-content"></div></div>
+                <div class="result-block" id="wayback-block" style="display: none;"><h5>Wayback Machine (Archive.org)</h5><div id="wayback-results-content"></div></div>
+                <div class="result-block" id="serpapi-block" style="display: none;"><h5>Google Dork Results (via SerpApi)</h5><div id="serpapi-results-content"></div></div>
+                <div class="result-block" id="manual-passive-block" style="display: none;">
+                     <h5>General Passive Info</h5>
+                     <div class="sub-block"><h6>Manual Google Dork Suggestions</h6><pre id="manual-dorks-results"></pre></div>
+                     <div class="sub-block"><h6>Shodan / Censys Links</h6><div id="shodan-censys-results"></div></div>
+                     <div class="sub-block"><h6>Manual Checks & Vuln Hint</h6><ul id="manual-checks-results"></ul></div>
+                </div>
+            </div> <!-- End Passive Section -->
+
+            <!-- Active Results Section -->
+            <div id="active-results-section" class="results-section" style="display: none;">
+                <h4>Active Reconnaissance Results for <span class="target-display"></span></h4>
+                 <div class="result-block" id="nmap-block" style="display: none;"><h5>Port Scan (Nmap)</h5><pre id="portscan-results"></pre></div>
+                 <div class="result-block" id="crawl-block" style="display: none;"><h5>Web Crawl (Basic)</h5><pre id="crawl-results"></pre></div>
+                 <div class="result-block" id="tech_active-block" style="display: none;"><h5>Technology Detection (webtech)</h5><div id="active-tech-results-content"></div></div>
+                 <div class="result-block" id="axfr-block" style="display: none;"><h5>DNS Zone Transfer (AXFR Attempt)</h5><pre id="zonetransfer-results"></pre></div>
+                 <div class="result-block" id="fuzz-block" style="display: none;"><h5>Directory/File Fuzzing (Basic)</h5><pre id="fuzzing-results"></pre></div>
+                 <div class="result-block" id="vuln-hint-block" style="display: none;"><h5>Manual Vulnerability Check Suggestion</h5><p id="active-vuln-suggestion"></p></div>
+            </div> <!-- End Active Section -->
+        </div> <!-- End Results Area -->
+    </div> <!-- End Recon Tab -->
+
+
+    <!-- Forensic Tools Tab Content -->
+    <div id="forensics-tab" class="tab-content">
+        <h2>Forensic Tools</h2>
+
+        <!-- Image Metadata Tool -->
+        <div class="forensic-tool">
+            <h3>Image Metadata Analyzer</h3>
+            <div class="input-area">
+                <label for="image-upload">Select Image:</label>
+                <input type="file" id="image-upload" name="image_file" accept="image/*">
+                 <button id="analyze-image-btn">Analyze Image Metadata</button>
+            </div>
+             <div id="forensic-loading" class="loading" style="display: none;">
+                Analyzing image... Please wait.
+            </div>
+            <div id="forensic-error-message" class="error" style="display: none;"></div>
+            <div id="image-metadata-results" class="result-block" style="display: none;">
+                <h4>Metadata for <span id="image-filename-display"></span></h4>
+                <div id="metadata-content"></div>
+                <div id="gps-content" style="margin-top: 15px;"></div>
+                <!-- Optional Map Placeholder -->
+                <!-- <div id="map-display" style="height: 300px; margin-top: 15px;"></div> -->
+            </div>
+        </div> <!-- End Image Metadata Tool -->
+
+        <!-- Placeholder for future forensic tools -->
+        <!--
+        <div class="forensic-tool">
+            <h3>Another Forensic Tool</h3>
+            <p>Tool content here...</p>
+        </div>
+        -->
+
+         <!-- Original Forensics Guidance Section (Moved here) -->
+        <div id="forensics-guidance-section" class="results-section" style="margin-top: 30px;">
+            <h3>General Forensics Guidance</h3>
+            <p>This section provides general pointers for analyzing artifacts. It does <strong>not</strong> perform analysis itself.</p>
+            <div class="result-block"><h4>Image Forensics Guidance</h4><p>Look for EXIF data (camera model, date, GPS), hidden pixels (steganography), manipulation evidence (inconsistencies, compression artifacts).</p></div>
+            <div class="result-block"><h4>Document Forensics Guidance</h4><p>Check metadata (author, creation/modification dates), hidden text/comments, revision history, embedded objects, fonts.</p></div>
+            <div class="result-block"><h4>Other Forensic Considerations</h4><p>File system timestamps (MAC times), network traffic analysis, memory analysis, log file correlation.</p><p><strong>Note:</strong> Proper forensic analysis requires specialized tools (e.g., Autopsy, Volatility) and adherence to legal procedures (chain of custody).</p></div>
+        </div> <!-- End Forensics Guidance Section -->
+
+
+    </div> <!-- End Forensics Tab -->
+
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <!-- Optional: Add Leaflet JS if using interactive map -->
+    <!-- <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script> -->
+
+    <script>
+        // Simple Tab Switching Logic
+        function showTab(tabId) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            // Deactivate all buttons
+             document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // Show the selected tab
+            document.getElementById(tabId).classList.add('active');
+            // Activate the corresponding button
+             event.currentTarget.classList.add('active');
+        }
+        // Initialize default tab
+        document.addEventListener('DOMContentLoaded', () => {
+            showTab('recon-tab'); // Or 'forensics-tab' if you want that default
+             // Activate the first button by default
+            document.querySelector('.tab-button').classList.add('active');
+        });
+    </script>
+</body>
+</html>
